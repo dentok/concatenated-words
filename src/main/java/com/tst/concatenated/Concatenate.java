@@ -33,6 +33,7 @@ public class Concatenate {
 
     public void findLongestConcatinationWord(List<String> lengthMap) {
         listConcatenateWords = getConcatWordsList(lengthMap);
+        totalCountWordsConcatenate = listConcatenateWords.size();
     }
 
     public String getFirstLongestConcatenatedWord() {
