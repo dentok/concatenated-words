@@ -32,55 +32,20 @@ public class Concatenate {
     }
 
     public void findLongestConcatinationWord(List<String> lengthMap) {
-
-        List<String> elementList = new ArrayList(lengthMap);
-
-        for (int i = elementList.size() - 1; i >= 0; i--) {
-            countWordsInConcat = 0;
-            if (isContainsWord(elementList.get(i), true)) {
-                listConcatenateWords.add(elementList.get(i));
-            }
-        }
+        listConcatenateWords = getConcatWordsList(lengthMap);
     }
 
     public String getFirstLongestConcatenatedWord() {
 
-        getListConcatenateWords().sort(new StringLengthListSort());
+        listConcatenateWords.sort(new StringLengthListSort());
 
-        return getListConcatenateWords().get(getListConcatenateWords().size() - 1);
+        return listConcatenateWords.get(getListConcatenateWords().size() - 1);
     }
 
     public String getSecondLongestConcatenatedWord() {
 
-        return getListConcatenateWords().get(getListConcatenateWords().size() - 2);
+        return listConcatenateWords.get(getListConcatenateWords().size() - 2);
     }
-
-    boolean isContainsWord(String word, boolean first) {
-        if (!first && wordsMap.containsKey(word)) {
-            return wordsMap.get(word);
-        }
-        if (first) {
-            listWordsForCompare.remove(word);
-        }
-        for (int i = word.length() - 1; i >= 0; i--) {
-            if (listWordsForCompare.contains(word.substring(0, i + 1))) {
-                if ((i == word.length() - 1) || isContainsWord(word.substring(i + 1, word.length()), false)) {
-                    totalCountWordsConcatenate++;
-                    countWordsInConcat += 1;
-                    wordsMap.put(word, true);
-                    if (first) listWordsForCompare.add(word);
-                    return true;
-
-                }
-            }
-        }
-
-        wordsMap.put(word, false);
-        if (first) listWordsForCompare.add(word);
-
-        return false;
-    }
-
 
     public void findConcatenetedWord(String fileName) throws IOException {
 
@@ -91,6 +56,39 @@ public class Concatenate {
         }
 
         findLongestConcatinationWord(listWordsForCompare);
+    }
+
+    private boolean isContainsWord(String word, Map<String, Boolean> wordsList, Set<String> unicWords) {
+        if (wordsList.containsKey(word)) {
+            return wordsList.get(word);
+        }
+        for (int i = 1; i <= word.length(); i++) {
+            String pre = word.substring(0, i);
+
+            if (unicWords.contains(pre)) {
+                String w = word.substring(i);
+
+                if (unicWords.contains(w) || isContainsWord(w, wordsList, unicWords)) {
+                    wordsList.put(word, true);
+                    return true;
+                }
+            }
+        }
+        wordsList.put(word, false);
+        return false;
+    }
+
+    private List<String> getConcatWordsList(List<String> words) {
+        Set<String> unicWords = new HashSet<>(words);
+        Map<String, Boolean> wordsHolder = new HashMap<>();
+        List<String> result = new ArrayList<>();
+
+        for (String word : words) {
+            if (isContainsWord(word, wordsHolder, unicWords)) {
+                result.add(word);
+            }
+        }
+        return result;
     }
 
     class StringLengthListSort implements Comparator<String> {
