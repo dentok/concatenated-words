@@ -64,8 +64,8 @@ public class Concatenate {
         }
         for (int i = word.length() - 1; i >= 0; i--) {
             if (listWordsForCompare.contains(word.substring(0, i + 1))) {
-                totalCountWordsConcatenate++;
                 if ((i == word.length() - 1) || isContainsWord(word.substring(i + 1, word.length()), false)) {
+                    totalCountWordsConcatenate++;
                     countWordsInConcat += 1;
                     wordsMap.put(word, true);
                     if (first) listWordsForCompare.add(word);
